@@ -2,140 +2,141 @@ body {
     margin: 0;
     padding: 20px 10px;
     font-family: "Poppins", sans-serif;
-    background-color: #f3f4f6;
+    background: #f5f7fb;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
 }
 
-/* Main containers */
+/* Main Containers */
 header,
 main,
 footer {
     width: 100%;
-    max-width: 320px;
-}
-
-/* Main card */
-main {
-    background-color: white;
-    border: 1px solid #e5e7eb;
-    border-radius: 20px;
-    padding: 24px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+    max-width: 360px;
 }
 
 /* Header */
 header {
     text-align: center;
-    margin-bottom: 18px;
+    margin-bottom: 0;
+    background: rgba(255, 255, 255, 0.92);
+    padding: 30px 25px 10px;
+    border-radius: 20px 20px 0 0;
 }
 
 header h1 {
     margin: 0;
-    font-size: 34px;
-    font-weight: 700;
+    font-size: 32px;
     color: #0f172a;
 }
 
 header p {
-    margin-top: 8px;
+    margin-top: 10px;
     color: #64748b;
-    font-size: 14px;
+    font-size: 15px;
     line-height: 1.5;
+}
+
+/* Main Card */
+main {
+    background: rgba(255, 255, 255, 0.92);
+    padding: 20px 25px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+/* Footer inside card */
+footer {
+    background: rgba(255, 255, 255, 0.92);
+    border-radius: 0 0 20px 20px;
+    padding: 10px 25px 25px;
+    text-align: center;
+    color: #64748b;
+    font-size: 12px;
 }
 
 /* Sections */
 section {
-    margin-bottom: 24px;
+    margin-bottom: 22px;
 }
 
 /* Labels */
 label {
     display: block;
     margin-bottom: 8px;
-    color: #334155;
-    font-size: 14px;
     font-weight: 500;
+    color: #1e293b;
+    font-size: 14px;
 }
 
-/* File input */
+/* File Input */
 input[type="file"] {
     width: 100%;
-    font-size: 13px;
-    color: #475569;
+    padding: 8px;
+    border-radius: 10px;
+    background-color: #f8fbff;
     box-sizing: border-box;
+    font-size: 13px;
 }
 
-/* Upload status */
-#upload-status {
-    margin-top: 8px;
-    font-size: 12px;
-    color: #94a3b8;
-}
-
-/* Question textarea */
+/* Textarea */
 textarea {
     width: 100%;
-    min-height: 90px;
     padding: 12px;
     border: 1px solid #d1d5db;
     border-radius: 10px;
-    resize: vertical;
+    resize: none;
     box-sizing: border-box;
     font-size: 14px;
     outline: none;
 }
 
-textarea::placeholder {
-    color: #9ca3af;
+textarea:focus {
+    border-color: #2563eb;
 }
 
-/* Submit button */
+/* Button */
 button {
     margin-top: 12px;
-    margin-left: auto;
-    display: block;
-    padding: 10px 24px;
+    padding: 10px 18px;
     border: none;
     border-radius: 10px;
-    background-color: #2563eb;
+    background: #2563eb;
     color: white;
     font-size: 14px;
+    font-weight: 600;
     cursor: pointer;
+    width: auto;
+    float: right;
 }
 
 button:hover {
-    background-color: #1d4ed8;
+    background: #1d4ed8;
 }
 
-/* Status */
+/* Status Text */
+#upload-status,
 #status {
-    margin-top: 8px;
+    color: #94a3b8;
     font-size: 12px;
-    color: #64748b;
+    margin-top: 8px;
 }
 
-/* Answer section */
+/* Answer Box */
 #answer {
-    background-color: #f8fafc;
-    border: 1px solid #e2e8f0;
-    border-radius: 10px;
-    padding: 16px;
-    min-height: 70px;
+    background: #f8fafc;
+    border: 1px solid #dbe2ea;
+    border-radius: 12px;
+    padding: 15px;
+    min-height: 80px;
+    font-size: 14px;
+    color: #1e293b;
+    line-height: 1.5;
 }
 
 #answer-text {
-    color: #64748b;
-    font-size: 14px;
     font-style: italic;
-}
-
-/* Footer */
-footer {
-    margin-top: 20px;
-    text-align: center;
-    font-size: 12px;
-    color: #94a3b8;
+    color: #64748b;
 }
