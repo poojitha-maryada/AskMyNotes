@@ -8,6 +8,7 @@ const answerBox = document.getElementById("answer");
 const answerText = document.getElementById("answer-text");
 
 const statusText = document.getElementById("status");
+const spinner = document.getElementById("spinner");
 
 let uploadedFileName = "";
 
@@ -36,6 +37,7 @@ askBtn.addEventListener("click", function () {
     // Clear old messages
     statusText.textContent = "";
     answerBox.hidden = true;
+    spinner.hidden = true;
 
     // Default color
     statusText.style.color = "red";
@@ -58,12 +60,16 @@ askBtn.addEventListener("click", function () {
         return;
     }
 
-    // Show thinking message
+    // Show thinking message and spinner
     statusText.style.color = "gray";
     statusText.textContent = "Thinking...";
+    spinner.hidden = false;
 
     // Delay before showing answer
     setTimeout(function () {
+
+        // Hide spinner
+        spinner.hidden = true;
 
         // Clear thinking text
         statusText.textContent = "";
