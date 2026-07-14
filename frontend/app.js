@@ -1,5 +1,3 @@
-
-
 const pdfInput = document.getElementById("pdf-input");
 const uploadStatus = document.getElementById("upload-status");
 
