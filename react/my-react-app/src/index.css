@@ -1,0 +1,16 @@
+.card {
+  width: 320px;
+  margin: 20px auto;
+  padding: 15px;
+  background-color: white;
+  border: 1px solid gray;
+  border-radius: 8px;
+}
+
+.card h2 {
+  margin-top: 0;
+}
+
+.card p {
+  margin: 8px 0;
+}
