@@ -32,7 +32,7 @@ pdfInput.addEventListener("change", function () {
 });
 
 // Submit Button
-askBtn.addEventListener("click", function () {
+askBtn.addEventListener("click", async function () {
 
     const question = questionInput.value.trim();
 
@@ -66,18 +66,49 @@ askBtn.addEventListener("click", function () {
     statusText.textContent = "Thinking...";
     spinner.classList.remove("hidden");
 
-    // Simulate AI Response
-    setTimeout(function () {
+    try {
+
+        // Send question to FastAPI backend
+        const response = await fetch(
+            "https://backend-ppu8.onrender.com/ask",
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify({
+                    question: question
+                })
+            }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error("Request failed");
+        }
+
+        // Hide loader
+        spinner.classList.add("hidden");
+        statusText.textContent = "";
+
+        // Show answer
+        answerBox.classList.remove("hidden");
+
+        answerText.textContent = data.answer;
+
+    } catch (error) {
 
         spinner.classList.add("hidden");
 
-        statusText.textContent = "";
+        statusText.style.color = "red";
 
-        answerBox.classList.remove("hidden");
+        statusText.textContent =
+            "Unable to connect to the backend.";
 
-        answerText.textContent =
-            `The answer for "${question}" is displayed here.`;
-
-    }, 2000);
+        console.error(error);
+    }
 
 });
