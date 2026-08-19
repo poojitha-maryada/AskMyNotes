@@ -2,6 +2,7 @@ from fastapi import FastAPI, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from PyPDF2 import PdfReader
+import re
 
 
 app = FastAPI(
@@ -11,22 +12,24 @@ app = FastAPI(
 )
 
 
-# React runs on port 5173.
-# FastAPI runs on port 8000.
-# Since these are different origins, CORS permission is required.
+# CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
-    "http://localhost:5500",
-    "http://127.0.0.1:5500",
-],
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+        "http://localhost:5500",
+        "http://127.0.0.1:5500",
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+# Stores the extracted text from the uploaded PDF
 pdf_text = ""
+
 
 class QuestionRequest(BaseModel):
     question: str
@@ -35,6 +38,7 @@ class QuestionRequest(BaseModel):
 class QuestionResponse(BaseModel):
     question: str
     answer: str
+
 
 @app.post("/upload")
 async def upload_pdf(file: UploadFile = File(...)):
@@ -52,6 +56,8 @@ async def upload_pdf(file: UploadFile = File(...)):
     return {
         "message": "PDF uploaded successfully"
     }
+
+
 @app.get("/")
 def home():
     return {
@@ -78,13 +84,68 @@ def ask_question(request: QuestionRequest):
         )
 
     if pdf_text == "":
-        answer = "No PDF has been uploaded yet."
+        return QuestionResponse(
+            question=cleaned_question,
+            answer="No PDF has been uploaded yet.",
+        )
 
-    elif cleaned_question.lower() in pdf_text.lower():
-        answer = "Found related content in the PDF."
+    # Convert PDF text and question to lowercase
+    pdf_lower = pdf_text.lower()
+    question_lower = cleaned_question.lower()
+
+    # Remove punctuation from the question
+    words = re.findall(r"\b[a-zA-Z0-9]+\b", question_lower)
+
+    # Remove common words that don't help with searching
+    stop_words = {
+        "what", "is", "are", "the", "a", "an",
+        "of", "in", "on", "to", "for", "and",
+        "how", "why", "does", "do", "can",
+        "you", "explain", "tell", "me", "about"
+    }
+
+    keywords = [
+        word for word in words
+        if word not in stop_words and len(word) > 2
+    ]
+
+    # Find sentences containing question keywords
+    sentences = re.split(r'(?<=[.!?])\s+', pdf_text)
+
+    matching_sentences = []
+
+    for sentence in sentences:
+
+        sentence_lower = sentence.lower()
+
+        score = 0
+
+        for keyword in keywords:
+            if keyword in sentence_lower:
+                score += 1
+
+        if score > 0:
+            matching_sentences.append((score, sentence.strip()))
+
+    # Sort by relevance
+    matching_sentences.sort(
+        key=lambda item: item[0],
+        reverse=True
+    )
+
+    if matching_sentences:
+
+        best_matches = [
+            sentence
+            for score, sentence in matching_sentences[:3]
+        ]
+
+        answer = " ".join(best_matches)
 
     else:
-        answer = "No matching content found in the PDF."
+
+        answer = "No relevant content found in the PDF."
+
 
     return QuestionResponse(
         question=cleaned_question,
