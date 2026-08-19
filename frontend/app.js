@@ -13,24 +13,62 @@ const spinner = document.getElementById("spinner");
 let uploadedFileName = "";
 
 // PDF Upload
-pdfInput.addEventListener("change", function () {
+pdfInput.addEventListener("change", async function () {
 
-    if (pdfInput.files.length > 0) {
+    if (pdfInput.files.length === 0) {
+        uploadedFileName = "";
+        uploadStatus.textContent = "No file uploaded yet.";
+        return;
+    }
 
-        uploadedFileName = pdfInput.files[0].name;
+    const file = pdfInput.files[0];
+
+    // Check PDF
+    if (file.type !== "application/pdf") {
+        uploadedFileName = "";
+        uploadStatus.textContent = "Please select a PDF file.";
+        return;
+    }
+
+    uploadedFileName = file.name;
+
+    uploadStatus.textContent = "Uploading PDF...";
+
+    try {
+
+        const formData = new FormData();
+
+        formData.append("file", file);
+
+        const response = await fetch(
+            "https://backend-ppu8.onrender.com/upload",
+            {
+                method: "POST",
+                body: formData
+            }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error("Upload failed");
+        }
 
         uploadStatus.textContent =
             `Uploaded: ${uploadedFileName}`;
 
-    } else {
+        console.log(data);
+
+    } catch (error) {
 
         uploadedFileName = "";
 
         uploadStatus.textContent =
-            "No file uploaded yet.";
+            "PDF upload failed.";
+
+        console.error(error);
     }
 });
-
 // Submit Button
 askBtn.addEventListener("click", async function () {
 
