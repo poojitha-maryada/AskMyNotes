@@ -1,6 +1,7 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+from PyPDF2 import PdfReader
 
 
 app = FastAPI(
@@ -25,7 +26,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
+pdf_text = ""
 
 class QuestionRequest(BaseModel):
     question: str
@@ -35,7 +36,22 @@ class QuestionResponse(BaseModel):
     question: str
     answer: str
 
+@app.post("/upload")
+async def upload_pdf(file: UploadFile = File(...)):
+    global pdf_text
 
+    reader = PdfReader(file.file)
+
+    text = ""
+
+    for page in reader.pages:
+        text += page.extract_text() or ""
+
+    pdf_text = text
+
+    return {
+        "message": "PDF uploaded successfully"
+    }
 @app.get("/")
 def home():
     return {
@@ -52,6 +68,7 @@ def health_check():
 
 @app.post("/ask", response_model=QuestionResponse)
 def ask_question(request: QuestionRequest):
+
     cleaned_question = request.question.strip()
 
     if not cleaned_question:
@@ -60,7 +77,16 @@ def ask_question(request: QuestionRequest):
             answer="Please enter a question.",
         )
 
+    if pdf_text == "":
+        answer = "No PDF has been uploaded yet."
+
+    elif cleaned_question.lower() in pdf_text.lower():
+        answer = "Found related content in the PDF."
+
+    else:
+        answer = "No matching content found in the PDF."
+
     return QuestionResponse(
         question=cleaned_question,
-        answer=f'Your question "{cleaned_question}" was received successfully.',
+        answer=answer,
     )

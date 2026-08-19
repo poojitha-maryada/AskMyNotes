@@ -1,3 +1,5 @@
 uvicorn
 pydantic
 fastapi
+python-multipart
+PyPDF2
